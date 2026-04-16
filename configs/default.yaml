@@ -1,0 +1,75 @@
+# Default configuration for Credit Card Fraud Detection
+
+# Data configuration
+data:
+  path: "data/synthetic_fraud.csv"
+  test_size: 0.2
+  val_size: 0.1
+  random_seed: 42
+  time_split: true  # Use temporal splits instead of random
+  
+# Feature engineering
+features:
+  categorical_encoding: "target"  # target, onehot, ordinal
+  numerical_scaling: "robust"     # standard, robust, minmax, none
+  feature_selection: true
+  max_features: 50
+  
+# Model configuration
+model:
+  name: "xgboost"  # xgboost, lightgbm, neural_network, ensemble
+  params:
+    xgboost:
+      n_estimators: 1000
+      max_depth: 6
+      learning_rate: 0.1
+      subsample: 0.8
+      colsample_bytree: 0.8
+      random_state: 42
+    lightgbm:
+      n_estimators: 1000
+      max_depth: 6
+      learning_rate: 0.1
+      subsample: 0.8
+      colsample_bytree: 0.8
+      random_state: 42
+    neural_network:
+      hidden_layers: [128, 64, 32]
+      dropout: 0.3
+      learning_rate: 0.001
+      batch_size: 256
+      epochs: 100
+      early_stopping: 10
+
+# Imbalanced learning
+imbalanced:
+  method: "smote"  # smote, undersample, class_weight, focal_loss
+  smote_params:
+    k_neighbors: 5
+    random_state: 42
+
+# Evaluation
+evaluation:
+  metrics: ["aucpr", "precision_at_k", "recall_at_precision", "fpr_at_tpr"]
+  k_values: [100, 500, 1000]  # For precision@K
+  target_precision: 0.95  # For recall at fixed precision
+  target_tpr: 0.95  # For FPR at target TPR
+  cv_folds: 5
+  stratified: true
+
+# Explainability
+explainability:
+  shap_samples: 1000
+  feature_importance_top_k: 20
+  
+# Logging
+logging:
+  level: "INFO"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  file: "logs/training.log"
+  
+# Device configuration
+device:
+  cuda: true
+  mps: true  # Apple Silicon
+  fallback_cpu: true
